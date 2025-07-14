@@ -50,9 +50,9 @@ Code/
    ```bash
    python main.py
    ```
-   Or with uvicorn (hot reload):
+   Or with uvicorn:
    ```bash
-   uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+   uvicorn main:app --host 0.0.0.0 --port 8000
    ```
 
 4. **Access the API**
