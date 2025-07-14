@@ -83,8 +83,7 @@ class ExtractionService:
         date_patterns = [
             r'\d{4}[-/]\d{1,2}[-/]\d{1,2}',  # YYYY-MM-DD or YYYY/MM/DD
             r'\d{1,2}[-/]\d{1,2}[-/]\d{4}',  # DD-MM-YYYY or DD/MM/YYYY
-            r'\d{4}年\d{1,2}月\d{1,2}日',    # Chinese date format
-            r'\d{1,2}月\d{1,2}日',          # Simplified Chinese date
+            # Removed Chinese date patterns
         ]
         
         dates_found = []
@@ -106,11 +105,10 @@ class ExtractionService:
         """Enhance amount extraction"""
         # Amount regex patterns
         amount_patterns = [
-            r'￥\s*(\d+(?:\.\d{2})?)',      # ￥123.45
             r'\$\s*(\d+(?:\.\d{2})?)',      # $123.45
-            r'(\d+(?:\.\d{2})?)\s*元',      # 123.45元
-            r'总计\s*[\:：]\s*(\d+(?:\.\d{2})?)',  # 总计: 123.45
-            r'合计\s*[\:：]\s*(\d+(?:\.\d{2})?)',  # 合计: 123.45
+            r'(\d+(?:\.\d{2})?)\s*dollars?', # 123.45 dollars
+            r'Total\s*[:：]?\s*(\d+(?:\.\d{2})?)',  # Total: 123.45
+            r'Amount\s*[:：]?\s*(\d+(?:\.\d{2})?)', # Amount: 123.45
         ]
         
         amounts_found = []
@@ -135,9 +133,9 @@ class ExtractionService:
         """Enhance name extraction"""
         # Simple name patterns (can be extended as needed)
         name_patterns = [
-            r'患者\s*[\:：]\s*([^\s\n]+)',      # Patient: Name
-            r'医生\s*[\:：]\s*([^\s\n]+)',      # Doctor: Name
-            r'姓名\s*[\:：]\s*([^\s\n]+)',      # Name: Name
+            r'Patient\s*[:：]\s*([^\s\n]+)',      # Patient: Name
+            r'Doctor\s*[:：]\s*([^\s\n]+)',       # Doctor: Name
+            r'Name\s*[:：]\s*([^\s\n]+)',         # Name: Name
         ]
         
         names_found = []
@@ -160,9 +158,8 @@ class ExtractionService:
         # Referral letter specific patterns
         patterns = {
             "urgency_level": [
-                r'紧急|urgent|emergency',
-                r'普通|routine|normal',
-                r'急诊|emergency'
+                r'urgent|emergency',
+                r'routine|normal',
             ]
         }
         
@@ -170,7 +167,7 @@ class ExtractionService:
             if result.get(field) is None:
                 for pattern in pattern_list:
                     if re.search(pattern, text, re.IGNORECASE):
-                        if "紧急" in pattern or "urgent" in pattern or "emergency" in pattern:
+                        if "urgent" in pattern or "emergency" in pattern:
                             result[field] = "urgent"
                         else:
                             result[field] = "routine"
@@ -182,7 +179,7 @@ class ExtractionService:
         """Enhance medical certificate specific fields"""
         # Medical certificate specific patterns
         if result.get("follow_up_required") is None:
-            if re.search(r'复诊|复查|follow.*up|revisit', text, re.IGNORECASE):
+            if re.search(r'follow.*up|revisit', text, re.IGNORECASE):
                 result["follow_up_required"] = True
             else:
                 result["follow_up_required"] = False
@@ -194,11 +191,11 @@ class ExtractionService:
         # Receipt specific patterns
         if result.get("payment_method") is None:
             payment_methods = {
-                "现金": r'现金|cash',
-                "银行卡": r'银行卡|card|刷卡',
-                "支付宝": r'支付宝|alipay',
-                "微信": r'微信|wechat',
-                "其他": r'其他|other'
+                "Cash": r'cash',
+                "Bank Card": r'card',
+                "Alipay": r'alipay',
+                "WeChat": r'wechat',
+                "Other": r'other'
             }
             
             for method, pattern in payment_methods.items():

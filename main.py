@@ -27,7 +27,7 @@ app = FastAPI(
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
-    debug=True  # Enable debug mode
+    debug=False  # Enable debug mode
 )
 
 # Configure CORS

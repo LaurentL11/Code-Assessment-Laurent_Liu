@@ -25,13 +25,12 @@ pandas==2.0.3
 
 # Utilities
 aiofiles==23.2.1
-typing-extensions==4.8.0
 
-# Logging and monitoring
+# Logging
 loguru==0.7.2
 
-# Development tools
+# Development tools (only for development, not生产环境)
 pytest==7.4.3
 pytest-asyncio==0.21.1
 black==23.11.0
-flake8==6.1.0 
+flake8==6.1.0

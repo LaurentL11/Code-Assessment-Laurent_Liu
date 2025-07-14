@@ -7,6 +7,7 @@ from PIL import Image
 import fitz  # PyMuPDF
 import io
 import numpy as np
+from config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -118,7 +119,7 @@ class DocumentClassifier:
             text_length = max(len(text), 1)  # Avoid division by zero
             normalized_scores = {k: v / (text_length / 100) for k, v in classification_scores.items()}
             max_score = max(normalized_scores.values())
-            if max_score < 0.5:  # Threshold for normalized score per 100 chars
+            if max_score < settings.CLASSIFICATION_CONFIDENCE_THRESHOLD:  # Threshold for normalized score per 100 chars
                 logger.warning(f"Document type not supported. Normalized max score: {max_score:.3f}")
                 raise ValueError("unsupported_document_type")
             # Handle cases where multiple types have the same score
